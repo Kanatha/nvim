@@ -10,6 +10,11 @@ return {
 				"php-cs-fixer", -- PHP formatter
 				"prettier", -- JS/HTML formatter
 				"selene", -- Lua linter
+				"goimports", -- Go formatter (gofmt + import grouping)
+				"golangci-lint", -- Go linter (same as `make lint` / CI)
+				"delve", -- Go debugger
+				"debugpy", -- Python debugger
+				"csharpier", -- C# formatter
 			},
 		},
 	},
@@ -33,14 +38,28 @@ return {
 				php = { "php_cs_fixer" },
 				javascript = { "prettier" },
 				javascriptreact = { "prettier" },
+				-- conform prefers the project's own node_modules/.bin/prettier
+				-- and picks up its .prettierrc (argus/web has one)
+				typescript = { "prettier" },
+				typescriptreact = { "prettier" },
 				html = { "prettier" },
 				json = { "prettier" },
 				css = { "prettier" },
+				go = { "goimports" },
+				proto = { "buf" },
+				-- conform runs `dotnet csharpier` when the project has it in
+				-- dotnet-tools.json, else the mason-installed binary
+				cs = { "csharpier" },
+				-- Python intentionally has no formatter: argus/perception
+				-- isn't black/ruff formatted, so format-on-save would rewrite
+				-- whole files. Use <leader>cf with an LSP if you want it.
 			},
-			format_on_save = {
-				timeout_ms = 1500,
-				lsp_fallback = true,
-			},
+			format_on_save = function(bufnr)
+				if vim.bo[bufnr].filetype == "python" then
+					return
+				end
+				return { timeout_ms = 1500, lsp_fallback = true }
+			end,
 		},
 	},
 	{
@@ -54,9 +73,15 @@ return {
 			-- (easy to add later: lint.linters_by_ft.javascript = { "eslint_d" }).
 			lint.linters_by_ft = {
 				lua = { "selene" },
+				go = { "golangcilint" }, -- whole-package lint, only run on save (below)
+				proto = { "buf_lint" },
 			}
+			local on_save_only = { go = true, proto = true }
 			vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
-				callback = function()
+				callback = function(args)
+					if args.event == "InsertLeave" and on_save_only[vim.bo.filetype] then
+						return
+					end
 					lint.try_lint()
 				end,
 			})

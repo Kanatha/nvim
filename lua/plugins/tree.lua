@@ -3,11 +3,13 @@ return {
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	cmd = { "NvimTreeToggle", "NvimTreeFindFile" },
 	keys = {
-		{ "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Toggle file tree" },
-		{ "<leader>E", "<cmd>NvimTreeFindFile<cr>", desc = "Find current file in tree" },
+		-- <leader>e is oil (oil.lua); the tree lives on <leader>E
+		{ "<leader>E", "<cmd>NvimTreeFindFileToggle<cr>", desc = "Toggle file tree (at current file)" },
 	},
 	opts = {
 		disable_netrw = true,
+		-- directories open in oil instead
+		hijack_directories = { enable = false },
 		hijack_cursor = true,
 		update_focused_file = { enable = true },
 		view = { width = 32 },

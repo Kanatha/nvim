@@ -39,6 +39,10 @@ opt.updatetime = 250
 opt.timeoutlen = 400
 opt.completeopt = { "menu", "menuone", "noselect" }
 
+-- Per-project config: nvim loads a project's .nvim.lua (after asking you
+-- to :trust it once). argus uses this for debug targets and the Python venv.
+opt.exrc = true
+
 -- Whitespace rendering
 opt.list = true
 opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }

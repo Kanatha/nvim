@@ -18,6 +18,36 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
+-- Per-language indentation (default is 4 spaces, see options.lua)
+vim.api.nvim_create_autocmd("FileType", {
+	desc = "Go uses tabs",
+	pattern = { "go", "gomod", "gowork", "make" },
+	callback = function()
+		vim.opt_local.expandtab = false
+	end,
+})
+vim.api.nvim_create_autocmd("FileType", {
+	desc = "2-space languages",
+	pattern = {
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact",
+		"json",
+		"jsonc",
+		"yaml",
+		"helm",
+		"css",
+		"html",
+		"proto",
+	},
+	callback = function()
+		vim.opt_local.tabstop = 2
+		vim.opt_local.shiftwidth = 2
+		vim.opt_local.softtabstop = 2
+	end,
+})
+
 -- Create parent directories automatically when writing a new file
 vim.api.nvim_create_autocmd("BufWritePre", {
 	desc = "Auto-create parent directories on save",

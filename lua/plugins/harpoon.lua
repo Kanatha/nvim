@@ -1,0 +1,35 @@
+-- Harpoon 2: a short per-project list of files to jump between.
+-- <leader>a adds the current file, <leader>m opens the list (reorder or
+-- delete lines like a normal buffer, <CR> jumps, q/<Esc> closes),
+-- <leader>1..4 jump straight to that entry.
+return {
+	"ThePrimeagen/harpoon",
+	branch = "harpoon2",
+	dependencies = { "nvim-lua/plenary.nvim" },
+	keys = {
+		{
+			"<leader>a",
+			function()
+				require("harpoon"):list():add()
+			end,
+			desc = "Harpoon: add file",
+		},
+		{
+			"<leader>m",
+			function()
+				local harpoon = require("harpoon")
+				harpoon.ui:toggle_quick_menu(harpoon:list())
+			end,
+			desc = "Harpoon: menu",
+		},
+		{ "<leader>1", function() require("harpoon"):list():select(1) end, desc = "Harpoon: file 1" },
+		{ "<leader>2", function() require("harpoon"):list():select(2) end, desc = "Harpoon: file 2" },
+		{ "<leader>3", function() require("harpoon"):list():select(3) end, desc = "Harpoon: file 3" },
+		{ "<leader>4", function() require("harpoon"):list():select(4) end, desc = "Harpoon: file 4" },
+	},
+	config = function()
+		require("harpoon"):setup({
+			settings = { save_on_toggle = true, sync_on_ui_close = true },
+		})
+	end,
+}
